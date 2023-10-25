@@ -12,3 +12,4 @@ timm
 torch
 torchvision
 tqdm
+einops
