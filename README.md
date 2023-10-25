@@ -13,7 +13,11 @@ The method is elaborated in the paper [DiffMIC: Dual-Guidance Diffusion Network 
 
 ## Requirement
 
-``conda env create -f environment.yml``
+```
+python3 -m venv /path/to/new/virtual/environment
+source /path/to/new/virtual/environment/bin/activate
+
+```
 
 ## Datasets
 
