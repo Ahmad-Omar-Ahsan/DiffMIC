@@ -106,8 +106,7 @@ class DCG(nn.Module):
         # calculate y_global
         # note that y_global is not directly used in inference
         self.y_global = self.aggregation_function.forward(self.saliency_map)
-
-        # region proposal network
+        # Region proposal network
         small_x_locations = self.retrieve_roi_crops.forward(x_original, self.cam_size, self.saliency_map)
 
         # convert crop locations that is on self.cam_size to x_original
