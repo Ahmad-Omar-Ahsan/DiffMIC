@@ -30,6 +30,14 @@ def make_beta_schedule(schedule="linear", num_timesteps=1000, start=1e-5, end=1e
 
 def extract(input, t, x):
     shape = x.shape
+    # Ensure that t is a scalar or a 1-dimensional tensor
+    if t.dim() > 1:
+        raise ValueError("Index tensor 't' must be a scalar or 1-dimensional tensor.")
+
+    # If t is a scalar, convert it to a 1-dimensional tensor
+    if t.dim() == 0:
+        t = t.unsqueeze(0)
+        
     out = torch.gather(input, 0, t.to(input.device))
     reshape = [t.shape[0]] + [1] * (len(shape) - 1)
     return out.reshape(*reshape)
@@ -65,7 +73,7 @@ def p_sample(model, x, y, y_0_hat, y_T_mean, t, alphas, one_minus_alphas_bar_sqr
     """
     device = next(model.parameters()).device
     z = torch.randn_like(y)
-    t = torch.tensor([t]).to(device)
+    t = torch.tensor(t).to(device)
     alpha_t = extract(alphas, t, y)
     sqrt_one_minus_alpha_bar_t = extract(one_minus_alphas_bar_sqrt, t, y)
     sqrt_one_minus_alpha_bar_t_m_1 = extract(one_minus_alphas_bar_sqrt, t - 1, y)
@@ -122,6 +130,7 @@ def y_0_reparam(model, x, y, y_0_hat, y_T_mean, t, one_minus_alphas_bar_sqrt):
 def p_sample_loop(model, x, y_0_hat, y_T_mean, n_steps, alphas, one_minus_alphas_bar_sqrt,
                   only_last_sample=False):
     num_t, y_p_seq = None, None
+    # print(type(next(model.parameters())))
     device = next(model.parameters()).device
     z = torch.randn_like(y_T_mean).to(device)
     cur_y = z + y_T_mean  # sampled y_T
